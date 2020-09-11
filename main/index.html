@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
         <!-- <meta name="description" content=""> -->
         <!-- <meta name="author" content=""> -->
-        <title>詐彈超人</title>
+        <title>詐騙網站辨識平台</title>
         <!-- Font Awesome icons (free version)-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.13.0/js/all.min.js" crossorigin="anonymous"></script>
         <!-- Core theme CSS (includes Bootstrap)-->
@@ -16,17 +16,17 @@
     </head>
     <body id="page-top">
         <nav class="navbar navbar-expand-lg bg-secondary fixed-top" id="mainNav">
-            <div class="container"><a class="navbar-brand js-scroll-trigger" href="#page-top">詐彈超人</a>
+            <div class="container"><a class="navbar-brand js-scroll-trigger" href="#page-top">詐騙網站辨識</a>
                 <button class="navbar-toggler navbar-toggler-right font-weight-bold bg-primary text-white rounded" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false" aria-label="Toggle navigation">Menu <i class="fas fa-bars"></i></button>
                 <div class="collapse navbar-collapse" id="navbarResponsive">
                     <ul class="navbar-nav ml-auto">
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#search">SEARCH</a>
                         </li>
-                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#team">TEAM</a>
-                        </li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#about">ABOUT</a>
                         </li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#news">LATEST</a>
+                        </li>
+                        <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="#team">TEAM</a>
                         </li>
                         <li class="nav-item mx-0 mx-lg-1"><a class="nav-link py-3 px-0 px-lg-3 rounded js-scroll-trigger" href="login/index.html">LOGIN</a>
                         </li>
@@ -38,7 +38,7 @@
             <div class="container d-flex align-items-center flex-column">
                 <!-- Masthead Avatar Image--><img class="masthead-avatar mb-5" src="assets/img/avataaars.svg" alt="">
                 <!-- Masthead Heading-->
-                <h1 class="masthead-heading mb-0">歡迎使用詐彈超人平台</h1>
+                <h1 class="masthead-heading mb-0">歡迎使用詐騙網站辨識平台</h1>
                 <!-- Icon Divider-->
                 <div class="divider-custom divider-light">
                     <div class="divider-custom-line"></div>
@@ -64,39 +64,25 @@
                 </div>
                 <!-- search bar -->
                 <div class="col-md-10 col-lg-8 col-xl-7 mx-auto">
-                    <form>
+                    <form id="addURL">
                         <div class="form-row">
                             <div class="col-12 col-md-8 mb-2 mb-md-0">
-                                <input type="url" class="form-control form-control-lg" placeholder="請輸入網址">
+                                <input type="text" class="form-control form-control-lg" placeholder="請輸入網址" id="inputURL">
                             </div>
-                            <div class="col-12 col-md-2">
+                            <div class="col-12 col-md-2 mb-2">
                                 <!-- need to change type to submit later -->
                                 <!-- add toggel result div on query button -->
-                                <button type="button" class="btn btn-block btn-lg btn-primary query" data-target="#targetElement" data-toggle="collapse">查詢</button>
+                                <button type="button" class="btn btn-block btn-lg btn-primary query" data-target="#targetElement" data-toggle="collapse" id="getApiScores">查詢</button>
                             </div>
                             <div class="col-12 col-md-2">
                                  <!-- need to change type to submit later -->
-                                <button type="button" class="btn btn-block btn-lg btn-dark report">舉報</button>
+                                <button type="submit" class="btn btn-block btn-lg btn-dark report" data-target="#targetElement" data-toggle="collapse" value="Submit">舉報</button>
                             </div>
-                            <!-- show result div here -->
                         </div>
                         </br>
                         <div class="collapse" id="targetElement">
-                            <div class="panel panel-default">
-                                <!-- 插入新數字 -->
-                                <h3>
-                                    確認結果中
-                                </h3>
-                                <ul>
-                                    <li>字典分數： </li>
-                                    <li>mx分數： </li>
-                                    <li>domain更新日期分數： </li>
-                                    <li>domain新增日期分數： </li>
-                                    <li>domain過期日期分數： </li>
-                                </ul>
-                                <h4>
-                                    結果：
-                                </h4>
+                            <div class="panel panel-default" id="output">
+                                <!-- insert fetch data -->
                             </div>
                         </div>
                     </form>
@@ -464,14 +450,90 @@
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.bundle.min.js"></script>
         <!-- Third party plugin JS-->
         <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
-        <!-- Contact form JS-->
-        <script src="assets/mail/jqBootstrapValidation.js"></script>
-        <script src="assets/mail/contact_me.js"></script>
         <!-- Core theme JS-->
         <script src="js/scripts.js"></script>
         <!-- my scripts -->
         <script>
+            // Search section
 
+            // 查詢 get: fetch external API
+            document.getElementById('getApiScores').addEventListener('click', getApiScores);
+            function getApiScores(){
+                // let input_url = document.getElementById('inputURL').value; //production
+                // let parse_URL = new URL(input_url); //production
+                // console.log(parse_URL); //testing
+                // let domain = URL.hostname; //production
+                let domain = 1; //testing
+                // let internal_api = '<ip>/api/whois/'; //production
+                let internal_api = 'https://jsonplaceholder.typicode.com/posts/'; //testing
+                let query_api = internal_api + domain;
+                console.log(query_api); //testing
+
+                fetch(query_api)
+                .then(function(res){
+                    return res.json();
+                    // console.log(res.json()); //testing
+                })
+                // if return data is json
+                .then(function(data){
+                    let output = '<h3>檢測結果</h3>';
+                    //production: data scores and prediction, now is testing
+                    output += `
+                        <ul>
+                            <li>dic_score: ${data.id}</li>
+                            <li>create_score: ${data.id}</li>
+                            <li>update_score: ${data.id}</li>
+                            <li>expire_score: ${data.id}</li>
+                            <li>prediction: ${data.title}</li>
+                        </ul>
+                    `;
+                    document.getElementById('output').innerHTML = output;
+                })      
+            };
+            
+            //舉報 post: fetch post
+            document.getElementById('addURL').addEventListener('submit', addURL);
+            // document.getElementById('inputURL').addEventListener('submit', addPost);
+            function addURL(e){
+                e.preventDefault();
+
+                // let input_url = document.getElementById('inputURL').value; //production
+                // let parse_URL = new URL(input_url); //production
+                // console.log(parse_URL); //testing
+                // let domain = URL.hostname; //production
+                let domain = 1; //testing
+                // let internal_api = '<ip>/api/reported/'; //production
+                let internal_api = 'https://jsonplaceholder.typicode.com/posts/'; //testing
+                let query_api = internal_api + domain;
+                // console.log(query_api); //testing
+
+                let data = {domain: domain};
+
+                fetch(internal_api, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json, text/plain, */*',
+                        'Content-type': 'application/json'
+                    },
+                    body: JSON.stringify(data)
+                })
+                .then(function(res){
+                    return res.json();
+                })
+                .then(function(data){
+                    console.log('Success:', data);
+                    let output = '<h3>舉報完成</h3>';
+                    output += `
+                        <ul>
+                            <li>已加入domain: ${data.domain}</li>
+                        </ul>
+                    `;
+                    document.getElementById('output').innerHTML = output;
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+            };
         </script>
     </body>
 </html>
